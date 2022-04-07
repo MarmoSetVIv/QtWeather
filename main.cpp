@@ -55,45 +55,118 @@
 #include <QTreeView>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QNetworkReply>
+#include <httpcontrollerq.h>
+#include <QLabel>
+#include <QDialog>
+#include <QHBoxLayout>
+#include <QPixmap>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    HttpControllerQ pep;
+    pep.restRequest();
 
-    QCoreApplication::setApplicationVersion(QT_VERSION_STR);
-    QCommandLineParser parser;
-    parser.setApplicationDescription("Qt Dir View Example");
-    parser.addHelpOption();
-    parser.addVersionOption();
-    QCommandLineOption dontUseCustomDirectoryIconsOption("c", "Set QFileIconProvider::DontUseCustomDirectoryIcons");
-    parser.addOption(dontUseCustomDirectoryIconsOption);
-    parser.addPositionalArgument("directory", "The directory to start in.");
-    parser.process(app);
-    const QString rootPath = parser.positionalArguments().isEmpty()
-        ? QString() : parser.positionalArguments().first();
+    QDialog *dialog = new QDialog;
+    dialog->setGeometry(dialog->x(), dialog->y(), 250, 400);
 
-    QFileSystemModel model;
-    model.setRootPath("");
-    if (parser.isSet(dontUseCustomDirectoryIconsOption))
-        model.iconProvider()->setOptions(QFileIconProvider::DontUseCustomDirectoryIcons);
-    QTreeView tree;
-    tree.setModel(&model);
-    if (!rootPath.isEmpty()) {
-        const QModelIndex rootIndex = model.index(QDir::cleanPath(rootPath));
-        if (rootIndex.isValid())
-            tree.setRootIndex(rootIndex);
-    }
+    QVBoxLayout *mainLayout = new QVBoxLayout(dialog);
+    QHBoxLayout *layoutHedder = new QHBoxLayout;
+    QHBoxLayout *CenterLayout = new QHBoxLayout;
+    QVBoxLayout *layoutLeft = new QVBoxLayout;
+    QVBoxLayout *layoutRight = new QVBoxLayout;
+    QHBoxLayout *layoutBottem = new QHBoxLayout;
 
-    // Demonstrating look and feel features
-    tree.setAnimated(false);
-    tree.setIndentation(20);
-    tree.setSortingEnabled(true);
-    const QSize availableSize = QApplication::desktop()->availableGeometry(&tree).size();
-    tree.resize(availableSize / 2);
-    tree.setColumnWidth(0, tree.width() / 3);
+    mainLayout->addLayout(layoutHedder);
+    layoutHedder->setAlignment(Qt::AlignTop);
+    layoutHedder->setAlignment(Qt::AlignHCenter);
 
-    tree.setWindowTitle(QObject::tr("Weather Widget"));
-    tree.show();
+    mainLayout->addLayout(CenterLayout);
+    CenterLayout->addLayout(layoutLeft);
+    layoutLeft->setAlignment(Qt::AlignLeft);
+    CenterLayout->addLayout(layoutRight);
+    layoutRight->setAlignment(Qt::AlignRight);
+
+    mainLayout->addLayout(layoutBottem);
+    layoutBottem->setAlignment(Qt::AlignBottom);
+
+    QLabel *label1 = new QLabel;
+    label1->setText("<font color=red>Hello, World!</font>");
+    label1->setAlignment(Qt::AlignHCenter);
+//    label1->setAutoFillBackground(true);
+
+//Левая
+
+    QPixmap *cartun = new QPixmap;
+    cartun->load(pep.getData());
+    QSize sizeCart(50,50);
+    QLabel *labelCart = new QLabel;
+    labelCart->setPixmap(cartun->scaled(sizeCart,Qt::KeepAspectRatio));
+    labelCart->setMargin(35);
+
+    QLabel *labelTemp = new QLabel;
+    QFont font = labelTemp->font();
+    labelTemp->setText(QString::number(pep.gettemp())+"°С");
+    font.setPointSize(20);
+    labelTemp->setFont(font);
+    labelTemp->setAlignment(Qt::AlignRight);
+    labelTemp->setMargin(2);
+//    label2->setMargin(10);
+//правая
+    QLabel *labelWind_speed = new QLabel;
+    labelWind_speed->setText("Скорость ветра "+QString::number(pep.getwind_speed())+"м/с");
+    labelWind_speed->setAlignment(Qt::AlignRight);
+    labelWind_speed->setMargin(1);
+
+    QLabel *labelWind_gust = new QLabel;
+    labelWind_gust->setText("Скорость порывов "+QVariant(pep.getwind_gust()).toString()+"м/с");
+    labelWind_gust->setAlignment(Qt::AlignRight);
+    labelWind_gust->setMargin(1);
+
+    QLabel *labelWind_dir = new QLabel;
+    labelWind_dir->setText("Направление "+pep.getwind_dir());
+    labelWind_dir->setAlignment(Qt::AlignRight);
+    labelWind_dir->setMargin(1);
+
+    QLabel *labelPressure_mm = new QLabel;
+    labelPressure_mm->setText("Давление "+QString::number(pep.getpressure_mm())+"mm");
+    labelPressure_mm->setAlignment(Qt::AlignRight);
+    labelPressure_mm->setMargin(1);
+
+    QLabel *labelFeelsLick = new QLabel;
+    labelFeelsLick->setText("<font color=green>Ощущаеться </font>"+QString::number(pep.getfeels_like())+"°С");
+    labelFeelsLick->setAlignment(Qt::AlignRight);
+    labelFeelsLick->setMargin(2);
+
+    QLabel *labelPrec_type = new QLabel;
+    labelPrec_type->setText("<font color=green>Тип осадков </font>"+QString::number(pep.getprec_type()));
+    labelPrec_type->setAlignment(Qt::AlignRight);
+    labelPrec_type->setMargin(2);
+
+    QLabel *labelcondition = new QLabel;
+    labelcondition->setText("<font color=green>Обозначение </font>"+pep.getcondition());
+    labelcondition->setAlignment(Qt::AlignRight);
+    labelcondition->setMargin(2);
+
+    QLabel *label4 = new QLabel;
+    label4->setText("kek");
+    label4->setAlignment(Qt::AlignHCenter);
+
+    layoutHedder->addWidget(label1);
+    layoutLeft->addWidget(labelCart);
+    layoutLeft->addWidget(labelTemp);
+    layoutRight->addWidget(labelFeelsLick);
+    layoutRight->addWidget(labelPrec_type);
+    layoutRight->addWidget(labelcondition);
+    layoutRight->addWidget(labelWind_speed);
+    layoutRight->addWidget(labelWind_gust);
+    layoutRight->addWidget(labelWind_dir);
+    layoutRight->addWidget(labelPressure_mm);
+    layoutBottem->addWidget(label4);
+
+    dialog->setWindowTitle("Weather Widget");
+    dialog->show();
 
     return app.exec();
 }

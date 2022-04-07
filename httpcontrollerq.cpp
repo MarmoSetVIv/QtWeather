@@ -18,28 +18,75 @@ HttpControllerQ::HttpControllerQ()
     nam = new QNetworkAccessManager(); // создаем менеджер
     //  connect(nam, &QNetworkAccessManager::finished, this, &HttpController::SlotFinished);
 
+}
 
+int HttpControllerQ::gettemp() const{ // функция для получения id друга
+    return temp;
+}
+
+int HttpControllerQ::getfeels_like() const{ // функция для получения id друга
+    return feels_like;
+}
+
+int HttpControllerQ::getwind_speed() const{ // функция для получения id друга
+    return wind_speed;
+}
+
+int HttpControllerQ::getprec_type() const{ // функция для получения id друга
+    return prec_type;
+}
+
+int HttpControllerQ::getpressure_mm() const{ // функция для получения id друга
+    return pressure_mm;
+}
+
+QString HttpControllerQ::getcondition() const{ // функция для получения имени друга
+    return condition;
+}
+
+QString HttpControllerQ::getwind_dir() const{ // функция для получения фамилии друга
+    return wind_dir;
+}
+
+QString HttpControllerQ::getdaytime() const{ // функция для получения фамилии друга
+    return daytime;
+}
+
+QString HttpControllerQ::getcseason() const{ // функция для получения фамилии друга
+    return season;
+}
+
+QVariant HttpControllerQ::getwind_gust() const{ // функция для получения id друга
+    return wind_gust;
+}
+
+QString HttpControllerQ::getData() const{ // функция для получения фамилии друга
+    return cartun;
+}
+
+
+void HttpControllerQ::PictureRequest()
+{
+    QUrl url = "https://yastatic.net/weather/i/icons/funky/dark/"+cartun+".svg";
+//    qDebug() <<"rjr" << url;
+    QEventLoop loop;
+    nam = new QNetworkAccessManager();
+    QNetworkRequest request(url);
+    QNetworkReply *reply = nam->get(request);
+    QObject::connect(nam, // связываем loop  с нашим менеджером
+                     SIGNAL(finished(QNetworkReply*)),
+                     &loop,
+                     SLOT(quit()));
+    loop.exec();
+    cartun = QString::fromUtf8(reply->readAll());
+//    qDebug() <<"rjr" << cartun;
+     reply->deleteLater();
 }
 
 void HttpControllerQ::restRequest()
 {
-
-    int temp;
-    int feels_like;
-    QString condition;
-    int wind_speed;
-    QVariant wind_gust;
-    QString wind_dir;
-    QString daytime;
-    QString season;
-    int prec_type;
-    int pressure_mm;
-
     QEventLoop loop;
     nam = new QNetworkAccessManager();
-//    qDebug() << request1.url();
-
-//    QNetworkReply *reply = nam->get(QNetworkRequest(QUrl("https://api.weather.yandex.ru/v2/informers?lat=55.75396&lon=37.620393")));
     QNetworkRequest request(QUrl("https://api.weather.yandex.ru/v2/forecast?lat=55.75396&lon=37.620393&extra=true"));
 //    request.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
     //    request.setRawHeader("Content-Type","");
@@ -55,19 +102,18 @@ void HttpControllerQ::restRequest()
         QJsonObject root = document.object();
 //        array = root.value("fact").toArray();
 //        qDebug() << "Наша URL-ka" << root;
-        QJsonValue itog = root.value("fact");
-        QJsonObject pop = itog.toObject();
-//        QJsonArray re = {"cloudness":1,"condition":"overcast","daytime":"d","feels_like":1,"humidity":39,"icon":"ovc",
-//                         "is_thunder":false,"obs_time":1649152800,"polar":false,"prec_prob":0,"prec_strength":0,
-//                         "prec_type":0,"pressure_mm":734,"pressure_pa":978,"season":"spring","soil_moisture":0.38,"soil_temp":0,
-//                         "source":"station","temp":4,"uptime":1649153412,"uv_index":3,"wind_dir":"s","wind_gust":10.5,"wind_speed":1};
-//        QByteArray  array1 =
+        QJsonValue itogFact = root.value("fact");
+        QJsonValue itogForecasts = root.value("forecasts");
+
+        QJsonObject ParsFact = itogFact.toObject();
+        QJsonObject ParsForecasts  = itogForecasts.toObject();
 //        QJsonArray array = itog.toArray();
-//            qDebug() <<"Наш itog"<< itog;
+            qDebug() <<"Наш itog"<< itogForecasts;
 //            qDebug() << "Наш поп" << pop;
 //            qDebug() <<"Наш itog"<< array;
-        for(int i = 0; i < pop.length(); i++){
-             QJsonObject znach = pop;
+        int week;
+        for(int i = 0; i < ParsFact.length(); i++){
+             QJsonObject znach = ParsFact;
      //       // Забираем значения свойств имени
               temp = znach.value("temp").toInt();
 //              qDebug() <<"Температура" << temp;
@@ -89,19 +135,29 @@ void HttpControllerQ::restRequest()
 //              qDebug() <<"Тип осадков."<< prec_type;
               pressure_mm = znach.value("pressure_mm").toInt();
 //              qDebug() <<"Давление"<< pressure_mm;
+              cartun = znach.value("icon").toString();
+        }
+        for(int i = 0; i < ParsForecasts.length(); i++){
+             QJsonObject znach = ParsForecasts;
+     //       // Забираем значения свойств имени
+             week = znach.value("week").toInt();
+//              qDebug() <<"Температура" << temp;
 
         }
 
-        qDebug() <<"Температура" << temp;
-        qDebug() <<"Ощущаеться как" << feels_like;
-        qDebug()  <<"Обозначение" << condition;
-        qDebug() <<"Скорость ветра" << wind_speed;
-        qDebug() <<"Скорость порывов ветра" << wind_gust;
-        qDebug() <<"Направление ветра"<< wind_dir;
-        qDebug() <<"Светлое или темное время суток"<< daytime;
-        qDebug() <<"Время года в данном населенном пункте"<< season;
-        qDebug() <<"Тип осадков."<< prec_type;
-        qDebug() <<"Давление"<< pressure_mm;
+//        qDebug() <<"Температура" << week;
+        reply->deleteLater();
+//        qDebug() <<"Ощущаеться как" << feels_like;
+//        qDebug()  <<"Обозначение" << condition;
+//        qDebug() <<"Скорость ветра" << wind_speed;
+//        qDebug() <<"Скорость порывов ветра" << wind_gust;
+//        qDebug() <<"Направление ветра"<< wind_dir;
+//        qDebug() <<"Светлое или темное время суток"<< daytime;
+//        qDebug() <<"Время года в данном населенном пункте"<< season;
+//        qDebug() <<"Тип осадков."<< prec_type;
+//        qDebug() <<"Давление"<< pressure_mm;
+//        qDebug() << "картинка" << cartun;
+        PictureRequest();
 
 
 
