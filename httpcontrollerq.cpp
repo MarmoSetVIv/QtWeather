@@ -12,6 +12,8 @@
 #include <iostream>
 #include <QString>
 #include <QByteArray>
+#include <weekclass.h>
+#include <QPixmap>
 
 HttpControllerQ::HttpControllerQ()
 {
@@ -65,23 +67,25 @@ QString HttpControllerQ::getData() const{ // функция для получе�
 }
 
 
-void HttpControllerQ::PictureRequest()
-{
-    QUrl url = "https://yastatic.net/weather/i/icons/funky/dark/"+cartun+".svg";
+//void HttpControllerQ::PictureRequest(QUrl url)
+//{
+////    QUrl url = "https://yastatic.net/weather/i/icons/funky/dark/"+cartun+".svg";
 //    qDebug() <<"rjr" << url;
-    QEventLoop loop;
-    nam = new QNetworkAccessManager();
-    QNetworkRequest request(url);
-    QNetworkReply *reply = nam->get(request);
-    QObject::connect(nam, // связываем loop  с нашим менеджером
-                     SIGNAL(finished(QNetworkReply*)),
-                     &loop,
-                     SLOT(quit()));
-    loop.exec();
-    cartun = QString::fromUtf8(reply->readAll());
-//    qDebug() <<"rjr" << cartun;
-     reply->deleteLater();
-}
+//    QEventLoop loop;
+//    nam = new QNetworkAccessManager();
+//    QNetworkRequest request(url);
+//    QNetworkReply *reply = nam->get(request);
+//    QObject::connect(nam, // связываем loop  с нашим менеджером
+//                     SIGNAL(finished(QNetworkReply*)),
+//                     &loop,
+//                     SLOT(quit()));
+//    loop.exec();
+//    QPixmap pixmap;
+//    pixmap.loadFromData(reply->readAll());
+////    qDebug() <<"rjr" << cartun;
+//     reply->deleteLater();
+
+//}
 
 void HttpControllerQ::restRequest()
 {
@@ -103,15 +107,11 @@ void HttpControllerQ::restRequest()
 //        array = root.value("fact").toArray();
 //        qDebug() << "Наша URL-ka" << root;
         QJsonValue itogFact = root.value("fact");
-        QJsonValue itogForecasts = root.value("forecasts");
-
         QJsonObject ParsFact = itogFact.toObject();
-        QJsonObject ParsForecasts  = itogForecasts.toObject();
 //        QJsonArray array = itog.toArray();
-            qDebug() <<"Наш itog"<< itogForecasts;
+//           qDebug() <<"Наш itog"<< root;
 //            qDebug() << "Наш поп" << pop;
 //            qDebug() <<"Наш itog"<< array;
-        int week;
         for(int i = 0; i < ParsFact.length(); i++){
              QJsonObject znach = ParsFact;
      //       // Забираем значения свойств имени
@@ -137,16 +137,36 @@ void HttpControllerQ::restRequest()
 //              qDebug() <<"Давление"<< pressure_mm;
               cartun = znach.value("icon").toString();
         }
-        for(int i = 0; i < ParsForecasts.length(); i++){
-             QJsonObject znach = ParsForecasts;
-     //       // Забираем значения свойств имени
-             week = znach.value("week").toInt();
-//              qDebug() <<"Температура" << temp;
 
-        }
+//        QJsonValue itogForc = root.value("forecasts"); //  данный кусок надо доделать
+//        QJsonObject ParsForecasts  = itogForc.toObject();
+//        qDebug() <<"yfi ger" << ParsForecasts;
+//        for(int i = 0; i < root.length(); i++){
+//             QJsonObject znach = root;
+//     //       // Забираем значения свойств имени
+
+//             QString m_datex = znach.value("date").toString();
+//             qDebug() <<"yfi ger" << m_datex;
+//             int m_temp_max = znach.value("temp_max").toInt();
+//             qDebug() <<"yfi ger" << m_temp_max;
+//             int m_temp_min= znach.value("temp_min").toInt();
+//             int m_temp_avg= znach.value("temp_avg").toInt();
+//             int m_temp= znach.value("temp").toInt();
+//             int m_prec_strength= znach.value("prec_strength").toInt();
+
+////              qDebug() <<"Температура" << temp;
+//             weekModel->addItem(WeekClass(m_datex,m_temp_max,m_temp_min,m_temp_avg,m_temp,m_prec_strength));
+//             qDebug() <<"yfi ger" << weekModel->Weekdata;
+//             qDebug() <<"yfi ger" << weekModel->WeekTempMax;
+//             qDebug() <<"yfi ger" << weekModel->WeekTempMin;
+//             qDebug() <<"yfi ger" << weekModel->WeekTempAvg;
+//             qDebug() <<"yfi ger" << weekModel->WeekTemp;
+//             qDebug() <<"yfi ger" << weekModel->WeekPrecStrength;
+
+//        }
 
 //        qDebug() <<"Температура" << week;
-        reply->deleteLater();
+
 //        qDebug() <<"Ощущаеться как" << feels_like;
 //        qDebug()  <<"Обозначение" << condition;
 //        qDebug() <<"Скорость ветра" << wind_speed;
@@ -157,7 +177,8 @@ void HttpControllerQ::restRequest()
 //        qDebug() <<"Тип осадков."<< prec_type;
 //        qDebug() <<"Давление"<< pressure_mm;
 //        qDebug() << "картинка" << cartun;
-        PictureRequest();
+        reply->deleteLater();
+//        PictureRequest();
 
 
 

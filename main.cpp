@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
     HttpControllerQ pep;
     pep.restRequest();
 
+
     QDialog *dialog = new QDialog;
     dialog->setGeometry(dialog->x(), dialog->y(), 250, 400);
 
@@ -92,69 +93,183 @@ int main(int argc, char *argv[])
     layoutBottem->setAlignment(Qt::AlignBottom);
 
     QLabel *label1 = new QLabel;
-    label1->setText("<font color=red>Hello, World!</font>");
+    label1->setText("<font color=red>Доброго времени суток! Погода по Москве </font>");
     label1->setAlignment(Qt::AlignHCenter);
 //    label1->setAutoFillBackground(true);
 
 //Левая
 
-    QPixmap *cartun = new QPixmap;
-    cartun->load(pep.getData());
-    QSize sizeCart(50,50);
-    QLabel *labelCart = new QLabel;
-    labelCart->setPixmap(cartun->scaled(sizeCart,Qt::KeepAspectRatio));
-    labelCart->setMargin(35);
+//    QPixmap *cartun = new QPixmap(":resourse/icons/WeatherIcon - 1-32.png");
+//    QSize sizeCart(35,35);
+//    QLabel *labelCart = new QLabel;
+//    QString ChangeIcon = "";
+//    if(pep.getData() == "ovc"){
+//        cartun->load(":resourse/icons/WeatherIcon - 1-32.png");
+//    }
+//    else if (pep.getwind_dir() == "n") {
+////        ChangeWinDir = "Северное.";
+//    }
+////    cartun->load("/icons/WeatherIcon - 1-32.png");
+//    labelCart->setPixmap(cartun->scaled(sizeCart,Qt::KeepAspectRatio));
+//    labelCart->setMargin(35);
 
     QLabel *labelTemp = new QLabel;
     QFont font = labelTemp->font();
     labelTemp->setText(QString::number(pep.gettemp())+"°С");
-    font.setPointSize(20);
+    font.setPointSize(35);
     labelTemp->setFont(font);
     labelTemp->setAlignment(Qt::AlignRight);
     labelTemp->setMargin(2);
 //    label2->setMargin(10);
 //правая
     QLabel *labelWind_speed = new QLabel;
-    labelWind_speed->setText("Скорость ветра "+QString::number(pep.getwind_speed())+"м/с");
+    labelWind_speed->setText("<font color=green>Скорость ветра: </font>"+QString::number(pep.getwind_speed())+"м/с");
     labelWind_speed->setAlignment(Qt::AlignRight);
     labelWind_speed->setMargin(1);
 
     QLabel *labelWind_gust = new QLabel;
-    labelWind_gust->setText("Скорость порывов "+QVariant(pep.getwind_gust()).toString()+"м/с");
+    labelWind_gust->setText("<font color=green>Скорость порывов: </font>"+QVariant(pep.getwind_gust()).toString()+"м/с");
     labelWind_gust->setAlignment(Qt::AlignRight);
     labelWind_gust->setMargin(1);
 
+    QString ChangeWinDir = "";
+    if(pep.getwind_dir() == "nw"){
+        ChangeWinDir = "Северо-западное.";
+    }
+    else if (pep.getwind_dir() == "n") {
+        ChangeWinDir = "Северное.";
+    }
+    else if (pep.getwind_dir() == "ne") {
+        ChangeWinDir = "Северо-восточное.";
+    }
+    else if (pep.getwind_dir() == "e") {
+        ChangeWinDir = "Восточное.";
+    }
+    else if (pep.getwind_dir() == "se") {
+        ChangeWinDir = "Юго-восточное.";
+    }
+    else if (pep.getwind_dir() == "s") {
+        ChangeWinDir = "Южное.";
+    }
+    else if (pep.getwind_dir() == "sw") {
+        ChangeWinDir = "Юго-западное.";
+    }
+    else if (pep.getwind_dir() == "w") {
+        ChangeWinDir = "Западное.";
+    }
+    else if (pep.getwind_dir() == "c") {
+        ChangeWinDir = "Штиль.";
+    }
+
     QLabel *labelWind_dir = new QLabel;
-    labelWind_dir->setText("Направление "+pep.getwind_dir());
+    labelWind_dir->setText("<font color=green>Направление: </font>"+ChangeWinDir);
     labelWind_dir->setAlignment(Qt::AlignRight);
     labelWind_dir->setMargin(1);
 
     QLabel *labelPressure_mm = new QLabel;
-    labelPressure_mm->setText("Давление "+QString::number(pep.getpressure_mm())+"mm");
+    labelPressure_mm->setText("<font color=green>Давление: </font>"+QString::number(pep.getpressure_mm())+"mm");
     labelPressure_mm->setAlignment(Qt::AlignRight);
     labelPressure_mm->setMargin(1);
 
     QLabel *labelFeelsLick = new QLabel;
-    labelFeelsLick->setText("<font color=green>Ощущаеться </font>"+QString::number(pep.getfeels_like())+"°С");
+    labelFeelsLick->setText("<font color=green>Ощущаеться: </font>"+QString::number(pep.getfeels_like())+"°С");
     labelFeelsLick->setAlignment(Qt::AlignRight);
     labelFeelsLick->setMargin(2);
 
+
+    QString ChangePrec = "";
+    if(pep.getprec_type() == 0){
+        ChangePrec = "Без осадков.";
+    }
+    else if (pep.getprec_type() == 1) {
+        ChangePrec = "Дождь.";
+    }
+    else if (pep.getprec_type() == 2) {
+        ChangePrec = "Дождь со снегом.";
+    }
+    else if (pep.getprec_type() == 3) {
+        ChangePrec = "Снег.";
+    }
+    else if (pep.getprec_type() == 4) {
+        ChangePrec = "Град.";
+    }
+
     QLabel *labelPrec_type = new QLabel;
-    labelPrec_type->setText("<font color=green>Тип осадков </font>"+QString::number(pep.getprec_type()));
+//    labelPrec_type->setText("<font color=green>Тип осадков </font>"+QString::number(pep.getprec_type()));
+    labelPrec_type->setText("<font color=green>Тип осадков: </font>"+ChangePrec);
     labelPrec_type->setAlignment(Qt::AlignRight);
     labelPrec_type->setMargin(2);
 
+    QString Changecond = "";
+    if(pep.getcondition() == "clear"){
+        Changecond = "Ясно.";
+    }
+    else if (pep.getcondition() == "partly-cloudy") {
+        Changecond = "Малооблачно.";
+    }
+    else if (pep.getcondition() == "cloudy") {
+        Changecond = "Облачно с прояснениями.";
+    }
+    else if (pep.getcondition() == "overcast") {
+        Changecond = "Пасмурно.";
+    }
+    else if (pep.getcondition() == "drizzle") {
+        Changecond = "Морось.";
+    }
+    else if (pep.getcondition() == "light-rain") {
+        Changecond = "Небольшой дождь.";
+    }
+    else if (pep.getcondition() == "rain") {
+        Changecond = "Дождь.";
+    }
+    else if (pep.getcondition() == "moderate-rain") {
+        Changecond = "Умеренно сильный дождь.";
+    }
+    else if (pep.getcondition() == "heavy-rain") {
+        Changecond = "Сильный дождь.";
+    }
+    else if (pep.getcondition() == "continuous-heavy-rain") {
+        Changecond = "Длительный сильный дождь.";
+    }
+    else if (pep.getcondition() == "showers") {
+        Changecond = "Ливень.";
+    }
+    else if (pep.getcondition() == "wet-snow") {
+        Changecond = "Дождь со снегом.";
+    }
+    else if (pep.getcondition() == "light-snow") {
+        Changecond = "Небольшой снег.";
+    }
+    else if (pep.getcondition() == "snow") {
+        Changecond = "Снег";
+    }
+    else if (pep.getcondition() == "snow-showers") {
+        Changecond = "Снегопад.";
+    }
+    else if (pep.getcondition() == "hail") {
+        Changecond = "Град.";
+    }
+    else if (pep.getcondition() == "thunderstorm") {
+        Changecond = "Гроза.";
+    }
+    else if (pep.getcondition() == "thunderstorm-with-rain") {
+        Changecond = "Дождь с грозой.";
+    }
+    else if (pep.getcondition() == "thunderstorm-with-hail") {
+        Changecond = "Гроза с градом.";
+    }
+
     QLabel *labelcondition = new QLabel;
-    labelcondition->setText("<font color=green>Обозначение </font>"+pep.getcondition());
+    labelcondition->setText("<font color=green>Обозначение: </font>" + Changecond);
     labelcondition->setAlignment(Qt::AlignRight);
     labelcondition->setMargin(2);
 
     QLabel *label4 = new QLabel;
-    label4->setText("kek");
+    label4->setText("Погода 1.0");
     label4->setAlignment(Qt::AlignHCenter);
 
     layoutHedder->addWidget(label1);
-    layoutLeft->addWidget(labelCart);
+//    layoutLeft->addWidget(labelCart);
     layoutLeft->addWidget(labelTemp);
     layoutRight->addWidget(labelFeelsLick);
     layoutRight->addWidget(labelPrec_type);
